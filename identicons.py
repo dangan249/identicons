@@ -38,6 +38,7 @@ def binary_to_rgb_matrix(binary_str, white_cells=5):
     
     # Convert the list to a 5x5 NumPy array
     matrix = np.array(rgb_values).reshape(5, 5, 3)  # Shape as (5, 5, 3) for RGB
+    matrix = reduce_colors(matrix)
     # Randomly select cells to be white
     white_indices = random.sample(range(25), white_cells)
     for index in white_indices:
@@ -49,6 +50,15 @@ def binary_to_rgb_matrix(binary_str, white_cells=5):
     matrix = choose_stylish_transformation(matrix)
     
     return matrix
+
+def reduce_colors(rgb_array, bit_depth=2):
+    factor = 2 ** (8 - bit_depth)
+    # Reduce the color depth by keeping only the most significant bits
+    reduced_rgb_array = (rgb_array // factor) * factor
+    # Scale up to avoid the dark colors
+    # Add factor//2 to increase the brightness after reduction
+    reduced_rgb_array += factor // 2
+    return np.clip(reduced_rgb_array, 0, 255)
 
 def apply_vertical_symmetry(matrix):
     for i in range(len(matrix)):
@@ -116,7 +126,7 @@ def main():
     username = args.username
 
     binary_string = generate_600b_binary_string(username)
-    matrix = binary_to_rgb_matrix(binary_string, white_cells=12)
+    matrix = binary_to_rgb_matrix(binary_string, white_cells=14)
     image = generate_image(matrix)
     save_image(image, username=username)
 
