@@ -60,15 +60,31 @@ def reduce_colors(rgb_array, bit_depth=2):
     reduced_rgb_array += factor // 2
     return np.clip(reduced_rgb_array, 0, 255)
 
+# def apply_vertical_symmetry(matrix):
+#     for i in range(len(matrix)):
+#         for j in range(len(matrix[i]) // 2):
+#             matrix[i][len(matrix[i]) - 1 - j] = matrix[i][j]
+#     return matrix
+
+# def apply_horizontal_symmetry(matrix):
+#     for i in range(len(matrix) // 2):
+#         matrix[len(matrix) - 1 - i] = matrix[i]
+#     return matrix
+
 def apply_vertical_symmetry(matrix):
-    for i in range(len(matrix)):
-        for j in range(len(matrix[i]) // 2):
-            matrix[i][len(matrix[i]) - 1 - j] = matrix[i][j]
+    cols = matrix.shape[1]
+    if cols % 2 == 0:
+        matrix[:, cols//2:] = np.flip(matrix[:, :cols//2], axis=1)
+    else:
+        matrix[:, cols//2+1:] = np.flip(matrix[:, :cols//2], axis=1)
     return matrix
 
 def apply_horizontal_symmetry(matrix):
-    for i in range(len(matrix) // 2):
-        matrix[len(matrix) - 1 - i] = matrix[i]
+    rows = matrix.shape[0]
+    if rows % 2 == 0:
+        matrix[rows//2:, :] = np.flip(matrix[:rows//2, :], axis=0)
+    else:
+        matrix[rows//2+1:, :] = np.flip(matrix[:rows//2, :], axis=0)
     return matrix
 
 def calculate_symmetry_score(matrix):
@@ -132,4 +148,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
